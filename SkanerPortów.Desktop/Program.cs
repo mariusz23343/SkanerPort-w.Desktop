@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
@@ -99,7 +101,22 @@ namespace SkanerPortów.Desktop
 
             Console.WriteLine(json);
 
-            JsonContent content = JsonContent.Create(ps.portDict);
+            IPAddress[] ipv4Addresses = Array.FindAll(Dns.GetHostEntry(string.Empty).AddressList, a => a.AddressFamily == AddressFamily.InterNetwork);
+            var ipv4 = ipv4Addresses[0].ToString();
+            Console.WriteLine("TEST IP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+            var dto = new PortListDto
+            {
+                portDict = ps.portDict,
+                IPv4 = ipv4,
+            };
+
+            foreach (IPAddress item in ipv4Addresses)
+            {
+                Console.WriteLine(item.ToString());
+            }
+
+            JsonContent content = JsonContent.Create(dto);
 
             SendDataToServer(content);
 
